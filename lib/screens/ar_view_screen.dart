@@ -65,8 +65,10 @@ class _ARViewScreenState extends State<ARViewScreen>
     )..repeat(reverse: true);
     _bgAnim = CurvedAnimation(parent: _bgCtrl, curve: Curves.easeInOut);
 
-    // Add product to AR session after the scanning animation completes
-    _arProvider.resetSession();
+    // Reset AR session safely after initial build frame completes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _arProvider.resetSession();
+    });
   }
 
   @override
