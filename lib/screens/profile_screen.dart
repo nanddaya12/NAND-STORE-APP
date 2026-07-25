@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import 'orders_screen.dart';
 import 'auth/role_selection_screen.dart';
 import '../widgets/media_upload_dialog.dart';
+import '../core/utils/location_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -501,15 +502,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           floatingActionButton: FloatingActionButton(
             backgroundColor: const Color(0xFF000613),
-            child: const Icon(Icons.add, color: Colors.white),
-            onPressed: () {
-              // Add a default mock address to list
-              setState(() {
-                _addresses.add('789 Silicon Valley Residency, Indiranagar, Bangalore, 560038');
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Added new address mock to book!')),
-              );
+            child: const Icon(Icons.my_location, color: Colors.white),
+            onPressed: () async {
+              final position = await LocationService.getCurrentLocation();
+              if (position != null) {
+                final address = await LocationService.getAddressFromCoordinates(position);
+                if (address != null && context.mounted) {
+                  setState(() {
+                    _addresses.add(address);
+                  });
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Current location added!')),
+                    );
+                  }
+                }
+              } else {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Could not fetch location.')),
+                  );
+                }
+              }
             },
           ),
         ),

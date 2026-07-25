@@ -4,8 +4,14 @@ import 'package:nand_store/main.dart';
 import 'package:nand_store/providers/store_provider.dart';
 import 'package:nand_store/providers/auth_provider.dart';
 
+import 'package:nand_store/core/storage/preferences_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
   testWidgets('App smoke test - find NAND STORE title', (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await PreferencesService.instance.init();
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [

@@ -82,7 +82,7 @@ class _ARViewScreenState extends State<ARViewScreen>
     setState(() => _isScanning = false);
     // Add product at center
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
+      if (context.mounted) {
         final size = MediaQuery.of(context).size;
         _arProvider.addProduct(widget.product, size);
       }
@@ -95,7 +95,7 @@ class _ARViewScreenState extends State<ARViewScreen>
 
     // Simulate saving snapshot
     await Future.delayed(const Duration(milliseconds: 600));
-    if (mounted) {
+    if (context.mounted) {
       setState(() {
         _showSnapshotFlash = false;
         _snapshotFeedback = '📸 AR Photo saved!';

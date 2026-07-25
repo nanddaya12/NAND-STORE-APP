@@ -50,8 +50,12 @@ class ApiClient {
 
   // Internet connectivity check helper
   Future<bool> isConnected() async {
-    final List<ConnectivityResult> results = await _connectivity.checkConnectivity();
-    return results.isNotEmpty && results.any((r) => r != ConnectivityResult.none);
+    final dynamic results = await _connectivity.checkConnectivity();
+    if (results is List) {
+      return results.isNotEmpty && results.any((r) => r != ConnectivityResult.none);
+    } else {
+      return results != ConnectivityResult.none;
+    }
   }
 
   Interceptor _authInterceptor() {

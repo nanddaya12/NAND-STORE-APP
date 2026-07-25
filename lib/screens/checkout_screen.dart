@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/store_provider.dart';
+import '../core/utils/location_service.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -176,7 +177,33 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const SizedBox(height: 10),
               _buildField(controller: _phoneController, label: 'Phone Number', icon: Icons.phone, keyboardType: TextInputType.phone),
               const SizedBox(height: 10),
-              _buildField(controller: _addressController, label: 'Street Address', icon: Icons.home),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildField(controller: _addressController, label: 'Street Address', icon: Icons.home),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.my_location, color: Color(0xFF000613)),
+                    onPressed: () async {
+                      final position = await LocationService.getCurrentLocation();
+                      if (position != null) {
+                        final address = await LocationService.getAddressFromCoordinates(position);
+                        if (address != null && context.mounted) {
+                          setState(() {
+                            _addressController.text = address;
+                          });
+                        }
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Could not fetch location.')),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ),
               const SizedBox(height: 10),
               Row(
                 children: [
